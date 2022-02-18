@@ -1,0 +1,1 @@
+DROP DATABASE marvel_teams
