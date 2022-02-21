@@ -1,47 +1,40 @@
--- DROP TABLE IF EXISTS characters, teams, leaders, managers CASCADE;
+DROP TABLE IF EXISTS characters, teams, leaders, members, owners, users, admins CASCADE;
 
--- CREATE TABLE teams(
---     team_id serial PRIMARY KEY,
---     team_name VARCHAR NOT NULL,
---     leader_id integer UNIQUE
--- );
-
--- CREATE TABLE managers(
---     manager_id serial PRIMARY KEY,
---     team_id integer UNIQUE references teams,
---     manager_name VARCHAR NOT NULL
--- );
-
--- CREATE TABLE characters(
---     character_id serial PRIMARY KEY,
---     team_id integer references teams,
---     character_name VARCHAR NOT NULL
--- );
-
--- CREATE TABLE leaders(
---     leader_id serial PRIMARY KEY,
---     character_id integer UNIQUE references characters
--- );
-
--- ALTER TABLE teams
--- ADD CONSTRAINT fk_leader_id FOREIGN KEY (leader_id) references leaders(leader_id);
-
-DROP TABLE IF EXISTS teams, people, characters CASCADE;
-
-DROP TYPE IF EXISTS team_role;
+CREATE TABLE characters(
+    character_id serial PRIMARY KEY,
+    character_name VARCHAR NOT NULL
+);
 
 CREATE TABLE teams(
     team_id serial PRIMARY KEY,
     team_name VARCHAR NOT NULL
 );
 
-CREATE TYPE team_role AS ENUM('member', 'leader', 'owner');
+CREATE TABLE leaders(
+    character_id INTEGER UNIQUE NOT NULL references characters,
+    team_id INTEGER UNIQUE NOT NULL references teams,
+    PRIMARY KEY(character_id, team_id)
+);
 
-CREATE TABLE people(
-    person_id serial PRIMARY KEY,
-    team_id integer references teams,
-    team_role team_role,
-    external_character_id VARCHAR
+CREATE TABLE members(
+    character_id INTEGER NOT NULL references characters,
+    team_id INTEGER NOT NULL references teams,
+    PRIMARY KEY(character_id, team_id)
+);
+
+CREATE TABLE users(
+    user_id serial PRIMARY KEY,
+    user_name VARCHAR NOT NULL,
+    email_address VARCHAR NOT NULL
+);
+
+CREATE TABLE owners(
+    user_id INTEGER NOT NULL references users,
+    team_id INTEGER UNIQUE NOT NULL references teams
+);
+
+CREATE TABLE admins(
+    user_id INTEGER UNIQUE NOT NULL references users
 );
 
 
